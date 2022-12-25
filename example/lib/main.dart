@@ -7,14 +7,12 @@ import 'package:flutter/services.dart';
 import 'package:gallery_media_picker/gallery_media_picker.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 void main() {
   Paint.enableDithering = true;
   WidgetsFlutterBinding.ensureInitialized();
   Provider.debugCheckInvalidValueType = null;
-  SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.black,
   ));
@@ -49,17 +47,19 @@ class Example extends StatefulWidget {
 
 class _ExampleState extends State<Example> {
   bool _singlePick = false;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Consumer<PickerDataProvider>(
         builder: (context, media, _) {
           return Scaffold(
+            backgroundColor: Colors.white,
             body: Column(
               children: [
                 Container(
                   height: 300,
-                  color: Colors.black,
+                  color: Colors.white,
                   child: media.pickedFile.isEmpty
 
                       /// no images selected
@@ -82,56 +82,38 @@ class _ExampleState extends State<Example> {
                               const SizedBox(height: 50),
                               const Text(
                                 'No images selected',
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white70),
+                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black),
                               )
                             ],
                           ),
                         )
 
                       /// selected images
-                      : PageView(
+                      : Column(
                           children: [
-                            ...media.pickedFile.map((data) {
-                              /// show image
-                              if (data.type == 'image') {
-                                return Center(
-                                  child: PhotoView.customChild(
-                                    enablePanAlways: true,
-                                    maxScale: 2.0,
-                                    minScale: 1.0,
-                                    child: Image.file(File(data.path)),
+                            if (media.pickedFile.last.type == 'image')
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                height: MediaQuery.of(context).size.width * 0.56,
+                                child: Image.file(File(media.pickedFile.last.path)),
+                              )
+                            else
+                              AspectRatio(
+                                aspectRatio: 16.0 / 9.0,
+                                child: BetterVideoPlayer(
+                                  configuration: const BetterVideoPlayerConfiguration(
+                                    looping: true,
+                                    autoPlay: true,
+                                    allowedScreenSleep: false,
+                                    autoPlayWhenResume: true,
                                   ),
-                                );
-                              }
-
-                              /// show video
-                              else {
-                                if (mounted) {
-                                  return AspectRatio(
-                                    aspectRatio: 16.0 / 9.0,
-                                    child: BetterVideoPlayer(
-                                      configuration:
-                                          const BetterVideoPlayerConfiguration(
-                                        looping: true,
-                                        autoPlay: true,
-                                        allowedScreenSleep: false,
-                                        autoPlayWhenResume: true,
-                                      ),
-                                      controller: BetterVideoPlayerController(),
-                                      dataSource: BetterVideoPlayerDataSource(
-                                        BetterVideoPlayerDataSourceType.file,
-                                        data.path,
-                                      ),
-                                    ),
-                                  );
-                                } else {
-                                  return Container();
-                                }
-                              }
-                            })
+                                  controller: BetterVideoPlayerController(),
+                                  dataSource: BetterVideoPlayerDataSource(
+                                    BetterVideoPlayerDataSourceType.file,
+                                    media.pickedFile.last.path,
+                                  ),
+                                ),
+                              )
                           ],
                         ),
                 ),
@@ -144,14 +126,21 @@ class _ExampleState extends State<Example> {
                     thumbnailQuality: 200,
                     thumbnailBoxFix: BoxFit.cover,
                     singlePick: _singlePick,
-                    gridViewBackgroundColor: Colors.grey[900],
-                    imageBackgroundColor: Colors.black,
+                    // imageBackgroundColor: Colors.red,
                     maxPickImages: 5,
                     appBarHeight: 60,
+                    appBarColor: Colors.white,
+                    appBarIconColor: Colors.black,
+                    appBarTextColor: Colors.black,
+                    gridViewBackgroundColor: Colors.white,
                     selectedBackgroundColor: Colors.black,
                     selectedCheckColor: Colors.black87,
                     selectedCheckBackgroundColor: Colors.white10,
+                    onMaxFileEvent: () {
+                      print("========uiohu");
+                    },
                     pathList: (paths) {
+                      print(paths.map((e) => e.id));
                       setState(() {
                         /// for this example i used provider, you can choose the state management that you prefer
                         media.pickedFile = paths;
@@ -182,29 +171,21 @@ class _ExampleState extends State<Example> {
                                         debugPrint(_singlePick.toString());
                                       },
                                       child: AnimatedContainer(
-                                        duration:
-                                            const Duration(milliseconds: 300),
+                                        duration: const Duration(milliseconds: 300),
                                         decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                          border: Border.all(
-                                              color: Colors.blue, width: 1.5),
+                                          borderRadius: BorderRadius.circular(6),
+                                          border: Border.all(color: Colors.blue, width: 1.5),
                                         ),
                                         child: Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.min,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
                                               const Text(
                                                 'Select multiple',
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 10),
+                                                style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w500, fontSize: 10),
                                               ),
                                               const SizedBox(
                                                 width: 7,
@@ -212,11 +193,7 @@ class _ExampleState extends State<Example> {
                                               Transform.scale(
                                                 scale: 1.5,
                                                 child: Icon(
-                                                  _singlePick
-                                                      ? Icons
-                                                          .check_box_outline_blank
-                                                      : Icons
-                                                          .check_box_outlined,
+                                                  _singlePick ? Icons.check_box_outline_blank : Icons.check_box_outlined,
                                                   color: Colors.blue,
                                                   size: 10,
                                                 ),
@@ -226,45 +203,12 @@ class _ExampleState extends State<Example> {
                                         ),
                                       ),
                                     ),
+                                    // Spacer(),
                                   ],
                                 ),
                               ),
                             ),
                             const Spacer(),
-
-                            /// share
-                            GestureDetector(
-                              onTap: () async {
-                                List<String> mediaPath = [];
-                                media.pickedFile.map((p) {
-                                  setState(() {
-                                    mediaPath.add(p.path);
-                                  });
-                                }).toString();
-                                if (mediaPath.isNotEmpty) {
-                                  await Share.shareFiles(mediaPath);
-                                }
-                                mediaPath.clear();
-                              },
-                              child: Container(
-                                height: 30,
-                                width: 30,
-                                decoration: BoxDecoration(
-                                  color: Colors.transparent,
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                      color: Colors.blue, width: 1.5),
-                                ),
-                                child: Transform.scale(
-                                  scale: 2,
-                                  child: const Icon(
-                                    Icons.share_outlined,
-                                    color: Colors.blue,
-                                    size: 10,
-                                  ),
-                                ),
-                              ),
-                            )
                           ],
                         ),
                       ),
