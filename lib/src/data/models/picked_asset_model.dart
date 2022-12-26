@@ -15,6 +15,7 @@ class PickedAssetModel {
   int? width;
   int? orientationHeight;
   int? orientationWidth;
+  int? orientation;
   Size? orientationSize;
   File? file;
   DateTime? modifiedDateTime;
@@ -35,6 +36,7 @@ class PickedAssetModel {
     this.orientationHeight,
     this.orientationWidth,
     this.orientationSize,
+    this.orientation,
     this.file,
     this.modifiedDateTime,
     this.title,

@@ -228,6 +228,7 @@ class _GalleryMediaPickerState extends State<GalleryMediaPicker> {
                                   orientationHeight: asset.orientatedHeight,
                                   orientationWidth: asset.orientatedWidth,
                                   orientationSize: asset.orientatedSize,
+                                  orientation: asset.orientation,
                                   file: await asset.file,
                                   modifiedDateTime: asset.modifiedDateTime,
                                   title: asset.title,
