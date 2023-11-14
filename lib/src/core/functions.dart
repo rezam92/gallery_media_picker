@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:gallery_media_picker/src/presentation/pages/gallery_media_picker_controller.dart';
 import 'package:gallery_media_picker/src/presentation/widgets/select_album_path/dropdown.dart';
 import 'package:gallery_media_picker/src/presentation/widgets/select_album_path/overlay_drop_down.dart';
-import 'package:oktoast/oktoast.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 class GalleryFunctions {
@@ -40,10 +39,7 @@ class GalleryFunctions {
               behavior: HitTestBehavior.translucent,
               onTap: () => close(null),
               child: OverlayDropDown(
-                  height: height!,
-                  close: close,
-                  animationController: animationController,
-                  builder: builder),
+                  height: height!, close: close, animationController: animationController, builder: builder),
             ));
     Overlay.of(context)!.insert(entry);
     animationController.animateTo(1);
@@ -61,8 +57,14 @@ class GalleryFunctions {
   static getPermission(setState, GalleryMediaPickerController provider) async {
     /// request for device permission
     var result = await PhotoManager.requestPermissionExtend(
-        requestOption: const PermissionRequestOption(
-            iosAccessLevel: IosAccessLevel.readWrite));
+      requestOption: const PermissionRequestOption(
+        androidPermission: AndroidPermission(
+          type: RequestType.all,
+          mediaLocation: true,
+        ),
+        iosAccessLevel: IosAccessLevel.readWrite,
+      ),
+    );
     if (result.isAuth) {
       /// load "recent" album
       provider.setAssetCount();
