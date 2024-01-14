@@ -1,7 +1,7 @@
 name: gallery_media_picker
 description: Gallery Media Picker has the same concept as image_picker but with a more attractive interface to choose an image or video from the device gallery, whether it is Android or iOS.
-version: 0.1.0+3
-homepage: https://github.com/camilo1498/gallery_media_picker
+version: 0.5.0+4
+homepage: https://github.com/rezam92/gallery_media_picker
 
 environment:
   sdk: '>=2.18.0 <4.0.0'
